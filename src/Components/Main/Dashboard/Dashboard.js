@@ -7,8 +7,8 @@ import WebRTCOld from './WebRTC/Initiated/initiated'
 import WebRTCSTUN from './WebRTC/Initiated/Test Jssip'
 import WebRTCSIPML from './WebRTC SIPML5/webRTC'
 import WebRTCSIPUDP from './WebRTC SIPML5/SIPJSUDP'
+import CotizadorPyS from './CotizadorPyS/CotizadorPyS'
 import React from 'react'
-import CosteoProductos from './ProductosYSoluciones/costeoProductos'
 import { Route, Routes } from 'react-router-dom'
 
 class Dashboard extends React.Component {

@@ -11,7 +11,8 @@ var mostrarActual = ''
 class TableRow extends React.Component {
   Percentages (value, string, rol) {
     var porc = 0
-    if (value < 0.5 && rol === 'vendedor') {
+
+    if (value > 0.0001 && value < 0.5 && rol === 'vendedor') {
       porc = string === 'act' ? 0.004 : 0.008
     } else if (value > 0.51 && value < 0.6 && rol === 'vendedor') {
       porc = string === 'act' ? 0.005 : 0.0093
@@ -23,7 +24,7 @@ class TableRow extends React.Component {
       porc = string === 'act' ? 0.006 : 0.0098
     } else if (value > 0.91 && value < 1.0 && rol === 'vendedor') {
       porc = string === 'act' ? 0.006 : 0.0098
-    } else if (value < 0.5 && rol === 'coordinador') {
+    } else if (value > 0.0001 && value < 0.5 && rol === 'coordinador') {
       porc = string === 'act' ? 0.001 : 0.0045
     } else if (value > 0.51 && value < 0.6 && rol === 'coordinador') {
       porc = string === 'act' ? 0.001 : 0.0045
@@ -68,38 +69,128 @@ class TableRow extends React.Component {
     }
   }
 
+  // CALCULAR VENTA MES
+
   calcuVenEjec (calculateNumber, e) {
     const item = this.props.item
     const itemAnterior = this.props.itemAnterior
+    const rol = this.props.rol
+    const allItems = this.props.allItems
 
     var num = parseFloat(calculateNumber)
 
     mostrar = e
     item.VentaEjecutada = num
 
-    if (item.month === 1) {
-      firstSale = item.VentaEjecutada
+    // month -> Mes
+    // pptoVenta -> Ppto Mes
+    // VentaEjecutada -> Venta Mes (Editable)
+    // porcCumplimiento -> % Cump Ppto
+    // ClienteActual -> Facturacion Actual (Editable2)
+    // Porcentaje -> % / Venta Mes (1 columna)
+    // ClienteNuevo -> Fact. Nueva
+    // PorcentajeNuevo -> % / Venta Mes (2 columna)
+    // PresupuestoAcumulado -> Ppto Mes Acumulado
+    // ComisionAct -> Comision Fact Actual
+    // ComisionNue -> Comision Fact Nueva
+    // salarioTotal -> Basico + Comision
+
+    var aux1 = 0
+    var arrayaux = []
+
+    allItems.map(element1 => {
+      if (element1.month < item.month) {
+        arrayaux.push(element1.VentaEjecutada)
+      }
+    })
+
+    var maxnum = 0
+
+    if (item.month !== '1') {
+      maxnum = arrayaux.reduce(function (a, b) {
+        return Math.max(a, b)
+      }, -Infinity)
+
+      if (item.VentaEjecutada > maxnum) {
+        aux1 = maxnum
+      } else {
+        aux1 = item.VentaEjecutada
+      }
     }
+
+    if (item.month === '1') {
+      item.pptoVenta = 0
+      item.Porcentaje = 0
+    }
+
+    // % CUMP PPTO
 
     item.porcCumplimiento =
-      item.PresupuestoAcumulado > num ? num / item.PresupuestoAcumulado : 0
-    item.Porcentaje = num > item.ClienteActual ? item.ClienteActual / num : 0
+      item.PresupuestoAcumulado > item.VentaEjecutada
+        ? item.VentaEjecutada / item.PresupuestoAcumulado
+        : 0
 
-    item.ClienteNuevo = num * item.PorcentajeNuevo
+    // FACT. ACTUAL
 
-    if (itemAnterior === null) {
-      item.pptoAcumulado = item.pptoVenta
+    if (item.month === '1') {
+      item.ClienteActual = 0
     } else {
-      item.pptoAcumulado =
-        item.pptoVenta +
-        itemAnterior.pptoAcumulado -
+      if (item.VentaEjecutada > aux1) {
+        item.ClienteActual = aux1
+      } else {
+        item.ClienteActual = item.VentaEjecutada
+      }
+    }
+
+    // (% / VENTA MES) 1 COLUMNA
+
+    item.Porcentaje =
+      item.VentaEjecutada >= item.ClienteActual
+        ? item.ClienteActual / item.VentaEjecutada
+        : 0
+
+    // FACT NUEVA
+
+    item.ClienteNuevo = item.VentaEjecutada - item.ClienteActual
+
+    // (% / VENTA MES) 2 COLUMNA
+
+    item.PorcentajeNuevo =
+      item.VentaEjecutada >= item.ClienteNuevo
+        ? item.ClienteNuevo / item.VentaEjecutada
+        : 0
+
+    // PPTO MES ACUMULADO
+
+    if (item.month === '1') {
+      item.PresupuestoAcumulado = 0
+    } else {
+      item.PresupuestoAcumulado =
+        itemAnterior.PresupuestoAcumulado +
+        item.pptoVenta -
         itemAnterior.VentaEjecutada
     }
+
+    // COMISION FACT. ACTUAL
+
+    item.ComisionAct =
+      this.Percentages(item.porcCumplimiento, 'act', rol) * item.ClienteActual
+
+    // COMISION FACT. NUEVA
+
+
+    item.ComisionNue =
+      this.Percentages(item.porcCumplimiento, 'new', rol) * item.ClienteNuevo
+
+    // BASICO + COMISION
+
+    item.salarioTotal =
+      item.ComisionAct + item.ComisionNue + parseInt(this.props.salarioMensual)
 
     this.props.updateItems(item, this.props.itemIndex)
   }
 
-  calcularClienteFacturando (event) {
+  /* calcularClienteFacturando (event) {
     if (event != null) {
       var spl = event.split(',')
       if (spl.length > 1) {
@@ -116,8 +207,11 @@ class TableRow extends React.Component {
     }
   }
 
+  // CALCULAR FACTURACION ACTUAL
+
   calcu (doubleNumber, event) {
     const item = this.props.item
+    const itemAnterior =this.props.itemAnterior
     const rol = this.props.rol
 
     var number = parseFloat(doubleNumber)
@@ -125,20 +219,39 @@ class TableRow extends React.Component {
     mostrarActual = event
     item.ClienteActual = number
 
-    item.Porcentaje =
-      item.VentaEjecutada > number ? number / item.VentaEjecutada : 0
+    // FACTURACION ACTUAL
 
-    item.ComisionAct =
-      number * this.Percentages(item.porcCumplimiento, 'act', rol)
+    var aux1 = 0
+
+    if(itemAnterior.VentaEjecutada > item.VentaEjecutada){
+      aux1 = itemAnterior.VentaEjecutada
+    } else {
+      aux1 = item.VentaEjecutada
+    }
+
+    
+
+    
+
+    // FACTURACION NUEVA
+
+    item.ClienteNuevo = item.VentaEjecutada - item.ClienteActual
+
+    // COMISION FACT ACTUAL
+
+
+    // (% / VENTA MES)
+
+   
 
     this.props.updateItems(item, this.props.itemIndex)
-  }
+  } */
 
   sendData () {
     // Crear metodo de envio de informacion
     var infoLogin = this.props.infoLogin.username
     if (
-      infoLogin === 'elkin.moreno' ||
+      // infoLogin === 'elkin.moreno' ||
       infoLogin === 'jesus.montoya' ||
       infoLogin === 'juanpablo.tejada' ||
       infoLogin === 'ingry.marquez'
@@ -206,7 +319,7 @@ class TableRow extends React.Component {
       inactiveMonth = true
     }
 
-    this.mostrarActual = item.ClienteActual
+    /* this.mostrarActual = item.ClienteActual
 
     item.porcCumplimiento = item.VentaEjecutada / item.PresupuestoAcumulado
 
@@ -258,33 +371,72 @@ class TableRow extends React.Component {
       }
     }
 
-    ////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////// 
+    */
+
+
+    if (isNaN(item.pptoVenta) || item.pptoVenta === null) {
+      item.pptoVenta = 0
+    }
 
     const presuVenta = Math.trunc(item.pptoVenta).toLocaleString('es-CO')
 
+    if (isNaN(item.porcCumplimiento) || item.porcCumplimiento === null) {
+      item.porcCumplimiento = 0
+    }
+
     var porcentajeCumpli = Math.round(item.porcCumplimiento * 100)
+
+    if (isNaN(item.ClienteActual) || item.ClienteActual === null) {
+      item.ClienteActual = 0
+    }
+
+    var factActual = Math.trunc(item.ClienteActual).toLocaleString('es-CO')
+
+    if (isNaN(item.Porcentaje) || item.Porcentaje === null) {
+      item.Porcentaje = 0
+    }
 
     var porcentajeActu = Math.round(item.Porcentaje * 100)
 
-    if (isNaN(porcentajeActu)) {
-      porcentajeActu = 0
+    if (isNaN(item.ClienteNuevo) || item.ClienteNuevo === null) {
+      item.ClienteNuevo = 0
     }
 
     var ventaClienteNuevo = item.ClienteNuevo.toLocaleString('es-CO')
 
+    if (isNaN(item.PorcentajeNuevo) || item.PorcentajeNuevo === null) {
+      item.PorcentajeNuevo = 0
+    }
+
     var porcentajeVentaNueva = Math.round(item.PorcentajeNuevo * 100)
 
-    if (isNaN(porcentajeVentaNueva)) {
-      porcentajeVentaNueva = 0
+    if (
+      isNaN(item.PresupuestoAcumulado) ||
+      item.PresupuestoAcumulado === null
+    ) {
+      item.PresupuestoAcumulado = 0
     }
 
     var presupuestoAcum = Math.trunc(item.PresupuestoAcumulado).toLocaleString(
       'es-CO'
     )
 
+    if (isNaN(item.ComisionAct) || item.ComisionAct === null) {
+      item.ComisionAct = 0
+    }
+
     var comiActualPesos = Math.trunc(item.ComisionAct).toLocaleString('es-CO')
 
+    if (isNaN(item.ComisionNue) || item.ComisionNue === null) {
+      item.ComisionNue = 0
+    }
+
     var comiNuevaPesos = Math.trunc(item.ComisionNue).toLocaleString('es-CO')
+
+    if (isNaN(item.salarioTotal) || item.salarioTotal === null) {
+      item.salarioTotal = 0
+    }
 
     var salarioPesos = Math.trunc(item.salarioTotal).toLocaleString('es-CO')
 
@@ -366,27 +518,7 @@ class TableRow extends React.Component {
           </td>
           {/* Venta Ejecutada */}
           <td>{porcentajeCumpli + '%'}</td>
-          <td>
-            <CurrencyFormat
-              className='form-control form-control-sm CurrencyInput'
-              placeholder='Ingrese valor'
-              type='text'
-              thousandSeparator='.'
-              decimalSeparator=','
-              decimalScale={0}
-              onChange={evt => this.calcularClienteFacturando(evt.target.value)}
-              disabled={inactiveMonth}
-              value={
-                item.ClienteActual === 0 || isNaN(item.ClienteActual)
-                  ? ''
-                  : item.ClienteActual
-              }
-              id={`ClienteActual${item.month}`}
-              onBlur={() => this.sendData(item)}
-              min='0'
-              inputstyle={{ border: 'none', width: '120%' }}
-            />
-          </td>
+          <td>{factActual}</td>
           {/* Cliente Facturando */}
           <td>{porcentajeActu + '%'}</td>
           <td>{ventaClienteNuevo}</td>

@@ -108,23 +108,6 @@ class Comisiones extends React.Component {
     sleep(1000).then(() => {
       this.gridApi.setRowData(this.state.rowData)
     })
-
-    /* fetch(url_base + '/api/files/getRTLFile')
-    .then(resp => resp.json())
-    .then(data => {
-      if (data.fileExists === false) {
-        swal(
-          'Error',
-          'No existe archivo RTL, por favor cargar el archivo',
-          'error'
-        )
-      } else {
-        params.api.setRowData(data.dataStream)
-        this.setState({
-          trm: data.exchange_rate
-        })
-      }
-    }) */
   }
 
   handleChange (event) {
@@ -401,7 +384,7 @@ class Comisiones extends React.Component {
                   name='selectRepresentante'
                 >
                   <option hidden>Seleccione</option>
-                  <option
+                  {/* <option
                     hidden={
                       infoLogin.username === 'ingry.marquez' ||
                       infoLogin.username === 'jacob.moritz' ||
@@ -417,7 +400,7 @@ class Comisiones extends React.Component {
                     value='general'
                   >
                     General
-                  </option>
+                  </option> */}
                   <optgroup label='Vendedores'>
                     <option
                        hidden={
@@ -582,7 +565,7 @@ class Comisiones extends React.Component {
                   onChange={ev => {
                     this.cambioPresupuesto(ev.target.value)
                   }}
-                  disabled={this.state.activarCampos ? false : true}
+                 disabled={this.state.activarCampos ? false : true}
                 />
               </div>
               <div className='col-1'>

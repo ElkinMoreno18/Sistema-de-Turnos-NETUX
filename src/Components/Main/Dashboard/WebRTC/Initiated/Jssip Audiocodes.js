@@ -33,6 +33,7 @@ export var allSessionsActive = []
 
 var primaryColor = process.env.REACT_APP_PRIMARY_COLOR
 var secondaryColor = process.env.REACT_APP_SECONDARY_COLOR
+var host = process.env.REACT_APP_HOST
 
 //var client = new W3CWebSocket('ws://20.29.114.114')
 //var client = new WebSocketClient({ closeTimeout: 6000 })
@@ -63,14 +64,6 @@ var eventHandlers = {
 var options = {
   eventHandlers: eventHandlers,
   mediaConstraints: { audio: true, video: false },
-  rtcOfferConstraints: {
-    offerToReceiveAudio: true,
-    offerToReceiveVideo: false
-  },
-  rtcAnswerConstraints: {
-    offerToReceiveAudio: true,
-    offerToReceiveVideo: false
-  },
   pcConfig: {
       iceServers: [
       {
@@ -84,7 +77,7 @@ var options = {
     ], 
     rtcpMuxPolicy: 'require'
   },
-  sessionTimersExpires: 7200
+  sessionTimersExpires: 9000
 }
 
 function Initiated () {
@@ -292,9 +285,9 @@ function Initiated () {
 
       console.log(JsSIP)
       var socket = new JsSIP.WebSocketInterface(
-        'wss://10.10.101.51:1006/'
+       'ws://34.125.174.206:8080'
+       //'ws://infwebrtc1.com:8080'
       )  
-
     //socket.via_transport = 'TLS'
 
     /////////////////////////// CONFIGURACION ISSABEL LOCAL //////////////
@@ -327,12 +320,12 @@ function Initiated () {
 
        var configuration = {
       sockets: [socket],
-      uri: 'sip:elkin.moreno@52.87.54.202',
-      password: 'Vamosverde18',
-     // ws_servers: 'wss://webrtc2.infinivirt.com:10081',
+      uri: 'sip:' + txtPublicId + '@34.125.174.206',
+      password: 'Infinivirt2022',
+      ws_servers: 'ws://34.125.174.206:8080',
       //realm: '20.29.114.114',
-      //contact_uri: 'sip:' + txtPublicId + '@20.29.114.114',
-      display_name: 'Test_Jesus_WebRTC',
+      contact_uri: 'sip:' + txtPublicId + '@8.242.174.2',
+      display_name: txtPublicId,
       user_agent: 'WebRTC Infinivirt'
     }  
  
@@ -634,16 +627,7 @@ function Initiated () {
   }
 
   useEffect(() => {
-
-    /* client.connect('ws//20.29.114.114/', 'echo-protocol')
-    client.onopen = () => {
-      console.log('WebSocket Client Connected');
-    };
-    client.onmessage = (message) => {
-      console.log(message);
-    }; */
-
-    register()
+  //  register()
   }, []) 
 
   function unregister () {
@@ -656,7 +640,7 @@ function Initiated () {
   function makeCall () {
     setShowDialPad(false)
 
-    call = ua.call('sip:' + numberPhone + '@208.89.104.141', options)
+    call = ua.call('sip:' + numberPhone + '@34.125.174.206', options)
     if (call) {
       call.connection.addEventListener('addstream', e => {
         var audio = document.createElement('audio')

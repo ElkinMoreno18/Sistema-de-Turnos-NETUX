@@ -83,6 +83,7 @@ class tableData extends React.Component {
     var data = this.state.datos
     var infoLogin = this.props.infoLogin
 
+
     if (representative === 'general') {
       rol = 'general'
     }
@@ -100,9 +101,9 @@ class tableData extends React.Component {
     let itemAnterior = null
 
     const body = this.state.items.map((item, index) => {
-      if (index > 1) {
+     // if (index > 1) {
         itemAnterior = this.state.items[index - 1]
-      }
+    //  }
 
       return (
         <>
@@ -118,6 +119,7 @@ class tableData extends React.Component {
             pptoMensual={monthPpto}
             rol={rol}
             infoLogin={infoLogin}
+            allItems={this.state.items}
           />
         </>
       )
@@ -141,37 +143,21 @@ class tableData extends React.Component {
         <div style={tableStyle} className='table-responsive'>
           <table id='table' className='table table-hover table-sm'>
             <thead style={headerStyle}>
-              <tr key={1} style={auxHeadStyle}>
-                <td></td>
-                <td></td>
-                <td> </td>
-                <td> </td>
-                <td style={auxStyle} colSpan={2}>
-                  Venta Actual
-                </td>
-                <td style={auxStyle} colSpan={2}>
-                  Venta Nueva
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr key={2}>
+              <tr key={1}>
                 <td>Mes</td>
-                <td>PPTO Ventas</td>
-                <td>ㅤㅤㅤVENTASㅤㅤㅤ</td>
-                <td>% Cumplimiento</td>
-                <td>Fact. Acumulada</td>
-                <td>%</td>
-                <td>Fact. Crecimiento</td>
-                <td>%</td>
-                <td>PPTO Acumulado</td>
+                <td>Ppto Mes</td>
+                <td>Venta Mes</td>
+                <td>% Cump. <br /> Ppto</td>
+                <td>Fact. Actual</td>
+                <td>% / Venta <br /> Mes</td>
+                <td>Fact. Nueva</td>
+                <td>% / Venta <br /> Mes</td>
+                <td>Ppto Mes Acumulado</td>
                 <td>
-                  Comisión <br /> Acumulada
+                  Comisión <br /> Fact. Actual
                 </td>
                 <td>
-                  Comisión <br /> Crecimiento
+                  Comisión <br /> Fact. Nueva
                 </td>
                 <td>
                   Básico + <br /> Comisión

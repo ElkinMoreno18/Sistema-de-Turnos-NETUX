@@ -1,4 +1,5 @@
 import React from 'react'
+import Chart from 'react-apexcharts'
 import LiquidFillGauge from 'react-liquid-gauge'
 import axios from 'axios'
 import Select from 'react-select'
@@ -35,7 +36,8 @@ export default class SBC extends React.Component {
       nameTemplate: '',
       checked: '',
       forAllUsers: false,
-      templates: []
+      templates: [],
+      optionsRadial: {}
     }
   }
 
@@ -81,7 +83,8 @@ export default class SBC extends React.Component {
           this.setState({
             datosConsult: res.data
           })
-        }).catch(function(error) {
+        })
+        .catch(function (error) {
           swal(error)
         })
     }
@@ -97,81 +100,102 @@ export default class SBC extends React.Component {
 
   consultDataDPBXSBC = async () => {
     var request = '/api/sbc/kpi/claroDPBX/SBC'
-    await axios.get(url_base + request).then(res => {
-      this.setState({
-        datosDPBXMain: res.data
+    await axios
+      .get(url_base + request)
+      .then(res => {
+        this.setState({
+          datosDPBXMain: res.data
+        })
       })
-    }).catch(function(error) {
-      swal(error)
-    })
+      .catch(function (error) {
+        swal(error)
+      })
   }
 
   consultDataDPBXMedia = async () => {
     var request = '/api/sbc/kpi/claroDPBX/Media'
-    await axios.get(url_base + request).then(res => {
-      this.setState({
-        datosDPBXMedia: res.data
+    await axios
+      .get(url_base + request)
+      .then(res => {
+        this.setState({
+          datosDPBXMedia: res.data
+        })
       })
-    }).catch(function(error) {
-      swal(error)
-    })
+      .catch(function (error) {
+        swal(error)
+      })
   }
 
   consultDataDPBXSystem = async () => {
     var request = '/api/sbc/kpi/claroDPBX/System'
-    await axios.get(url_base + request).then(res => {
-      this.setState({
-        datosDPBXSystem: res.data
+    await axios
+      .get(url_base + request)
+      .then(res => {
+        this.setState({
+          datosDPBXSystem: res.data
+        })
       })
-    }).catch(function(error) {
-      swal(error)
-    })
+      .catch(function (error) {
+        swal(error)
+      })
   }
 
   // CLARO ED //
 
   consultDataEDSBC = async () => {
     var request = '/api/sbc/kpi/claroED/SBC'
-    await axios.get(url_base + request).then(res => {
-      this.setState({
-        datosEDMain: res.data
+    await axios
+      .get(url_base + request)
+      .then(res => {
+        this.setState({
+          datosEDMain: res.data
+        })
       })
-    }).catch(function(error) {
-      swal(error)
-    })
+      .catch(function (error) {
+        swal(error)
+      })
   }
 
   consultDataEDMedia = async () => {
     var request = '/api/sbc/kpi/claroED/Media'
-    await axios.get(url_base + request).then(res => {
-      this.setState({
-        datosEDMedia: res.data
+    await axios
+      .get(url_base + request)
+      .then(res => {
+        this.setState({
+          datosEDMedia: res.data
+        })
       })
-    }).catch(function(error) {
-      swal(error)
-    })
+      .catch(function (error) {
+        swal(error)
+      })
   }
 
   consultDataEDSystem = async () => {
     var request = '/api/sbc/kpi/claroED/System'
-    await axios.get(url_base + request).then(res => {
-      this.setState({
-        datosEDSystem: res.data
+    await axios
+      .get(url_base + request)
+      .then(res => {
+        this.setState({
+          datosEDSystem: res.data
+        })
       })
-    }).catch(function(error) {
-      swal(error)
-    })
+      .catch(function (error) {
+        swal(error)
+      })
   }
 
   consultDataEDNetwork = async () => {
     var request = '/api/sbc/kpi/claroED/Network'
-    await axios.get(url_base + request).then(res => {
-      this.setState({
-        datosEDNetwork: res.data
+    await axios
+      .get(url_base + request)
+      .then(res => {
+        this.setState({
+          datosEDNetwork: res.data
+        })
       })
-    }).catch(function(error) {
-      swal(error)
-    })
+      .catch(function (error) {
+        swal(error)
+      })
   }
 
   componentDidMount () {
@@ -196,7 +220,8 @@ export default class SBC extends React.Component {
         this.setState({
           templates: res.data
         })
-      }).catch(function(error) {
+      })
+      .catch(function (error) {
         swal(error)
       })
   }
@@ -213,7 +238,8 @@ export default class SBC extends React.Component {
         checkedValueMedia = res.data
         checkedValueNetwork = res.data
         checkedValueSystem = res.data
-      }).catch(function(error) {
+      })
+      .catch(function (error) {
         swal(error)
       })
   }
@@ -227,7 +253,8 @@ export default class SBC extends React.Component {
       })
       .then(res => {
         console.log(res)
-      }).catch(function(error) {
+      })
+      .catch(function (error) {
         swal(error)
       })
   }
@@ -291,7 +318,8 @@ export default class SBC extends React.Component {
       })
       .then(res => {
         console.log(res)
-      }).catch(function(error) {
+      })
+      .catch(function (error) {
         swal(error)
       })
   }
@@ -347,22 +375,101 @@ export default class SBC extends React.Component {
     const gaugesSBCDPBX = this.state.datosConsult.map(item => {
       var id = item[1]
       var value = item[2]
+
       if (checkedValueSBC.length > 0) {
         if (item[0] === 'sbcDPBX') {
           return (
             <>
-              <div style={{ width: '20%', textAlign: 'center' }}>
-                <LiquidFillGauge
-                  id='activeCalls'
-                  style={{ margin: '0 auto' }}
-                  value={value}
-                  textSize={0.7}
-                  percent={id === 'answerSeizureRatio' ? '%' : ''}
-                  width={100}
-                  height={100}
-                  gradient
-                ></LiquidFillGauge>
-                <p style={{ fontSize: '8pt' }}>{id}</p>
+              <div
+                style={{ width: '20%', textAlign: 'center', height: '22vh' }}
+              >
+                <Chart
+                  options={{
+                    plotOptions: {
+                      radialBar: {
+                        /*   startAngle: -135,
+                    endAngle: 225, */
+                        hollow: {
+                          margin: 0,
+                          size: '70%',
+                          background: '#fff',
+                          position: 'front',
+                          dropShadow: {
+                            enabled: true,
+                            top: 3,
+                            left: 0,
+                            blur: 4,
+                            opacity: 0.24
+                          }
+                        },
+                        dataLabels: {
+                          name: {
+                            offsetY: -20,
+                            show: true,
+                            color: '#888',
+                            fontSize: '9px'
+                          },
+                          value: {
+                            formatter: function (val) {
+                              return val
+                            },
+                            color: '#111',
+                            fontSize: '13pt',
+                            show: true
+                          }
+                        }
+                      }
+                    },
+                    fill: {
+                      type: 'gradient',
+                      gradient: {
+                        shade: 'dark',
+                        type: 'horizontal',
+                        shadeIntensity: 0.5,
+                        gradientToColors: ['#ABE5A1'],
+                        inverseColors: true,
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [0, 100]
+                      }
+                    },
+                    stroke: {
+                      lineCap: 'round'
+                    },
+                    labels: [id],
+                    responsive: [
+                      {
+                        breakpoint: 1400,
+                        options: {
+                          plotOptions: {
+                            radialBar: {
+                              dataLabels: {
+                                name: {
+                                  offsetY: -60,
+                                  show: true,
+                                  color: '#888',
+                                  fontSize: '7pt'
+                                },
+                                value: {
+                                  formatter: function (val) {
+                                    return val
+                                  },
+                                  color: '#111',
+                                  fontSize: '12pt',
+                                  show: true,
+                                  offsetY: -10
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }}
+                  series={[value]}
+                  type='radialBar'
+                  //width="280"
+                />
               </div>
             </>
           )
@@ -379,17 +486,93 @@ export default class SBC extends React.Component {
           return (
             <>
               <div style={{ width: '20%', textAlign: 'center' }}>
-                <LiquidFillGauge
-                  id='media'
-                  style={{ margin: '0 auto' }}
-                  value={value}
-                  textSize={0.55}
-                  percent=''
-                  width={100}
-                  height={100}
-                  gradient
-                ></LiquidFillGauge>
-                <p style={{ fontSize: '8pt' }}>{id}</p>
+                <Chart
+                  options={{
+                    plotOptions: {
+                      radialBar: {
+                        /*   startAngle: -135,
+                    endAngle: 225, */
+                        hollow: {
+                          margin: 0,
+                          size: '70%',
+                          background: '#fff',
+                          position: 'front',
+                          dropShadow: {
+                            enabled: true,
+                            top: 3,
+                            left: 0,
+                            blur: 4,
+                            opacity: 0.24
+                          }
+                        },
+                        dataLabels: {
+                          name: {
+                            offsetY: -20,
+                            show: true,
+                            color: '#888',
+                            fontSize: '9px'
+                          },
+                          value: {
+                            formatter: function (val) {
+                              return val
+                            },
+                            color: '#111',
+                            fontSize: '13pt',
+                            show: true
+                          }
+                        }
+                      }
+                    },
+                    fill: {
+                      type: 'gradient',
+                      gradient: {
+                        shade: 'dark',
+                        type: 'horizontal',
+                        shadeIntensity: 0.5,
+                        gradientToColors: ['#ABE5A1'],
+                        inverseColors: true,
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [0, 100]
+                      }
+                    },
+                    stroke: {
+                      lineCap: 'round'
+                    },
+                    labels: [id],
+                    responsive: [
+                      {
+                        breakpoint: 1400,
+                        options: {
+                          plotOptions: {
+                            radialBar: {
+                              dataLabels: {
+                                name: {
+                                  offsetY: -60,
+                                  show: true,
+                                  color: '#888',
+                                  fontSize: '7pt'
+                                },
+                                value: {
+                                  formatter: function (val) {
+                                    return val
+                                  },
+                                  color: '#111',
+                                  fontSize: '12pt',
+                                  show: true,
+                                  offsetY: -10
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }}
+                  series={[value]}
+                  type='radialBar'
+                  //width="280"
+                />
               </div>
             </>
           )
@@ -406,17 +589,93 @@ export default class SBC extends React.Component {
           return (
             <>
               <div style={{ width: '20%', textAlign: 'center' }}>
-                <LiquidFillGauge
-                  id='activeCalls'
-                  style={{ margin: '0 auto' }}
-                  value={value}
-                  textSize={0.7}
-                  percent=''
-                  width={100}
-                  height={100}
-                  gradient
-                ></LiquidFillGauge>
-                <p style={{ fontSize: '8pt' }}>{id}</p>
+                <Chart
+                  options={{
+                    plotOptions: {
+                      radialBar: {
+                        /*   startAngle: -135,
+                    endAngle: 225, */
+                        hollow: {
+                          margin: 0,
+                          size: '70%',
+                          background: '#fff',
+                          position: 'front',
+                          dropShadow: {
+                            enabled: true,
+                            top: 3,
+                            left: 0,
+                            blur: 4,
+                            opacity: 0.24
+                          }
+                        },
+                        dataLabels: {
+                          name: {
+                            offsetY: -20,
+                            show: true,
+                            color: '#888',
+                            fontSize: '9px'
+                          },
+                          value: {
+                            formatter: function (val) {
+                              return val
+                            },
+                            color: '#111',
+                            fontSize: '13pt',
+                            show: true
+                          }
+                        }
+                      }
+                    },
+                    fill: {
+                      type: 'gradient',
+                      gradient: {
+                        shade: 'dark',
+                        type: 'horizontal',
+                        shadeIntensity: 0.5,
+                        gradientToColors: ['#ABE5A1'],
+                        inverseColors: true,
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [0, 100]
+                      }
+                    },
+                    stroke: {
+                      lineCap: 'round'
+                    },
+                    labels: [id],
+                    responsive: [
+                      {
+                        breakpoint: 1400,
+                        options: {
+                          plotOptions: {
+                            radialBar: {
+                              dataLabels: {
+                                name: {
+                                  offsetY: -60,
+                                  show: true,
+                                  color: '#888',
+                                  fontSize: '7pt'
+                                },
+                                value: {
+                                  formatter: function (val) {
+                                    return val
+                                  },
+                                  color: '#111',
+                                  fontSize: '12pt',
+                                  show: true,
+                                  offsetY: -10
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }}
+                  series={[value]}
+                  type='radialBar'
+                  //width="280"
+                />
               </div>
             </>
           )
@@ -433,17 +692,93 @@ export default class SBC extends React.Component {
           return (
             <>
               <div style={{ width: '20%', textAlign: 'center' }}>
-                <LiquidFillGauge
-                  id='activeCalls'
-                  style={{ margin: '0 auto' }}
-                  value={value}
-                  textSize={0.7}
-                  percent={id === 'answerSeizureRatio' ? '%' : ''}
-                  width={100}
-                  height={100}
-                  gradient
-                ></LiquidFillGauge>
-                <p style={{ fontSize: '8pt' }}>{id}</p>
+                <Chart
+                  options={{
+                    plotOptions: {
+                      radialBar: {
+                        /*   startAngle: -135,
+                    endAngle: 225, */
+                        hollow: {
+                          margin: 0,
+                          size: '70%',
+                          background: '#fff',
+                          position: 'front',
+                          dropShadow: {
+                            enabled: true,
+                            top: 3,
+                            left: 0,
+                            blur: 4,
+                            opacity: 0.24
+                          }
+                        },
+                        dataLabels: {
+                          name: {
+                            offsetY: -20,
+                            show: true,
+                            color: '#888',
+                            fontSize: '9px'
+                          },
+                          value: {
+                            formatter: function (val) {
+                              return val
+                            },
+                            color: '#111',
+                            fontSize: '13pt',
+                            show: true
+                          }
+                        }
+                      }
+                    },
+                    fill: {
+                      type: 'gradient',
+                      gradient: {
+                        shade: 'dark',
+                        type: 'horizontal',
+                        shadeIntensity: 0.5,
+                        gradientToColors: ['#ABE5A1'],
+                        inverseColors: true,
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [0, 100]
+                      }
+                    },
+                    stroke: {
+                      lineCap: 'round'
+                    },
+                    labels: [id],
+                    responsive: [
+                      {
+                        breakpoint: 1400,
+                        options: {
+                          plotOptions: {
+                            radialBar: {
+                              dataLabels: {
+                                name: {
+                                  offsetY: -60,
+                                  show: true,
+                                  color: '#888',
+                                  fontSize: '7pt'
+                                },
+                                value: {
+                                  formatter: function (val) {
+                                    return val
+                                  },
+                                  color: '#111',
+                                  fontSize: '12pt',
+                                  show: true,
+                                  offsetY: -10
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }}
+                  series={[value]}
+                  type='radialBar'
+                  //width="280"
+                />
               </div>
             </>
           )
@@ -460,17 +795,93 @@ export default class SBC extends React.Component {
           return (
             <>
               <div style={{ width: '20%', textAlign: 'center' }}>
-                <LiquidFillGauge
-                  id='activeCalls'
-                  style={{ margin: '0 auto' }}
-                  value={value}
-                  textSize={0.55}
-                  percent=''
-                  width={100}
-                  height={100}
-                  gradient
-                ></LiquidFillGauge>
-                <p style={{ fontSize: '8pt' }}>{id}</p>
+                <Chart
+                  options={{
+                    plotOptions: {
+                      radialBar: {
+                        /*   startAngle: -135,
+                    endAngle: 225, */
+                        hollow: {
+                          margin: 0,
+                          size: '70%',
+                          background: '#fff',
+                          position: 'front',
+                          dropShadow: {
+                            enabled: true,
+                            top: 3,
+                            left: 0,
+                            blur: 4,
+                            opacity: 0.24
+                          }
+                        },
+                        dataLabels: {
+                          name: {
+                            offsetY: -20,
+                            show: true,
+                            color: '#888',
+                            fontSize: '9px'
+                          },
+                          value: {
+                            formatter: function (val) {
+                              return val
+                            },
+                            color: '#111',
+                            fontSize: '13pt',
+                            show: true
+                          }
+                        }
+                      }
+                    },
+                    fill: {
+                      type: 'gradient',
+                      gradient: {
+                        shade: 'dark',
+                        type: 'horizontal',
+                        shadeIntensity: 0.5,
+                        gradientToColors: ['#ABE5A1'],
+                        inverseColors: true,
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [0, 100]
+                      }
+                    },
+                    stroke: {
+                      lineCap: 'round'
+                    },
+                    labels: [id],
+                    responsive: [
+                      {
+                        breakpoint: 1400,
+                        options: {
+                          plotOptions: {
+                            radialBar: {
+                              dataLabels: {
+                                name: {
+                                  offsetY: -60,
+                                  show: true,
+                                  color: '#888',
+                                  fontSize: '7pt'
+                                },
+                                value: {
+                                  formatter: function (val) {
+                                    return val
+                                  },
+                                  color: '#111',
+                                  fontSize: '10pt',
+                                  show: true,
+                                  offsetY: -10
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }}
+                  series={[value]}
+                  type='radialBar'
+                  //width="280"
+                />
               </div>
             </>
           )
@@ -487,17 +898,93 @@ export default class SBC extends React.Component {
           return (
             <>
               <div style={{ width: '20%', textAlign: 'center' }}>
-                <LiquidFillGauge
-                  id='activeCalls'
-                  style={{ margin: '0 auto' }}
-                  value={value}
-                  textSize={0.7}
-                  percent=''
-                  width={100}
-                  height={100}
-                  gradient
-                ></LiquidFillGauge>
-                <p style={{ fontSize: '8pt' }}>{id}</p>
+                <Chart
+                  options={{
+                    plotOptions: {
+                      radialBar: {
+                        /*   startAngle: -135,
+                    endAngle: 225, */
+                        hollow: {
+                          margin: 0,
+                          size: '70%',
+                          background: '#fff',
+                          position: 'front',
+                          dropShadow: {
+                            enabled: true,
+                            top: 3,
+                            left: 0,
+                            blur: 4,
+                            opacity: 0.24
+                          }
+                        },
+                        dataLabels: {
+                          name: {
+                            offsetY: -20,
+                            show: true,
+                            color: '#888',
+                            fontSize: '9px'
+                          },
+                          value: {
+                            formatter: function (val) {
+                              return val
+                            },
+                            color: '#111',
+                            fontSize: '13pt',
+                            show: true
+                          }
+                        }
+                      }
+                    },
+                    fill: {
+                      type: 'gradient',
+                      gradient: {
+                        shade: 'dark',
+                        type: 'horizontal',
+                        shadeIntensity: 0.5,
+                        gradientToColors: ['#ABE5A1'],
+                        inverseColors: true,
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [0, 100]
+                      }
+                    },
+                    stroke: {
+                      lineCap: 'round'
+                    },
+                    labels: [id],
+                    responsive: [
+                      {
+                        breakpoint: 1400,
+                        options: {
+                          plotOptions: {
+                            radialBar: {
+                              dataLabels: {
+                                name: {
+                                  offsetY: -60,
+                                  show: true,
+                                  color: '#888',
+                                  fontSize: '7pt'
+                                },
+                                value: {
+                                  formatter: function (val) {
+                                    return val
+                                  },
+                                  color: '#111',
+                                  fontSize: '12pt',
+                                  show: true,
+                                  offsetY: -10
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }}
+                  series={[value]}
+                  type='radialBar'
+                  //width="280"
+                />
               </div>
             </>
           )
@@ -514,17 +1001,93 @@ export default class SBC extends React.Component {
           return (
             <>
               <div style={{ width: '20%', textAlign: 'center' }}>
-                <LiquidFillGauge
-                  id='activeCalls'
-                  style={{ margin: '0 auto' }}
-                  value={value}
-                  textSize={0.6}
-                  percent=''
-                  width={100}
-                  height={100}
-                  gradient
-                ></LiquidFillGauge>
-                <p style={{ fontSize: '8pt' }}>{id}</p>
+                <Chart
+                  options={{
+                    plotOptions: {
+                      radialBar: {
+                        /*   startAngle: -135,
+                    endAngle: 225, */
+                        hollow: {
+                          margin: 0,
+                          size: '70%',
+                          background: '#fff',
+                          position: 'front',
+                          dropShadow: {
+                            enabled: true,
+                            top: 3,
+                            left: 0,
+                            blur: 4,
+                            opacity: 0.24
+                          }
+                        },
+                        dataLabels: {
+                          name: {
+                            offsetY: -20,
+                            show: true,
+                            color: '#888',
+                            fontSize: '9px'
+                          },
+                          value: {
+                            formatter: function (val) {
+                              return val
+                            },
+                            color: '#111',
+                            fontSize: '13pt',
+                            show: true
+                          }
+                        }
+                      }
+                    },
+                    fill: {
+                      type: 'gradient',
+                      gradient: {
+                        shade: 'dark',
+                        type: 'horizontal',
+                        shadeIntensity: 0.5,
+                        gradientToColors: ['#ABE5A1'],
+                        inverseColors: true,
+                        opacityFrom: 1,
+                        opacityTo: 1,
+                        stops: [0, 100]
+                      }
+                    },
+                    stroke: {
+                      lineCap: 'round'
+                    },
+                    labels: [id],
+                    responsive: [
+                      {
+                        breakpoint: 1400,
+                        options: {
+                          plotOptions: {
+                            radialBar: {
+                              dataLabels: {
+                                name: {
+                                  offsetY: -60,
+                                  show: true,
+                                  color: '#888',
+                                  fontSize: '7pt'
+                                },
+                                value: {
+                                  formatter: function (val) {
+                                    return val
+                                  },
+                                  color: '#111',
+                                  fontSize: '12pt',
+                                  show: true,
+                                  offsetY: -10
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }}
+                  series={[value]}
+                  type='radialBar'
+                  //width="280"
+                />
               </div>
             </>
           )
@@ -744,7 +1307,8 @@ export default class SBC extends React.Component {
                   style={{
                     height: '100vh',
                     overflowY: 'scroll',
-                    overflowX: 'hidden'
+                    overflowX: 'hidden',
+                    paddingBottom: '10%'
                   }}
                 >
                   <div className='ClaroDPBX'>
@@ -753,7 +1317,14 @@ export default class SBC extends React.Component {
                     </div>
                   </div>
                 </TabPanel>
-                <TabPanel>
+                <TabPanel
+                  style={{
+                    height: '100vh',
+                    overflowY: 'scroll',
+                    overflowX: 'hidden',
+                    paddingBottom: '10%'
+                  }}
+                >
                   <div className='ClaroDPBX'>
                     <div className='d-flex align-content-start flex-wrap justify-content-between'>
                       {gaugesMediaDPBX}
@@ -761,7 +1332,14 @@ export default class SBC extends React.Component {
                   </div>
                 </TabPanel>
 
-                <TabPanel>
+                <TabPanel
+                  style={{
+                    height: '100vh',
+                    overflowY: 'scroll',
+                    overflowX: 'hidden',
+                    paddingBottom: '10%'
+                  }}
+                >
                   <div className='ClaroDPBX'>
                     <div className='d-flex align-content-start flex-wrap justify-content-between'>
                       {gaugesSystemDPBX}
@@ -790,7 +1368,8 @@ export default class SBC extends React.Component {
                   style={{
                     height: '100vh',
                     overflowY: 'scroll',
-                    overflowX: 'hidden'
+                    overflowX: 'hidden',
+                    paddingBottom: '10%'
                   }}
                 >
                   <div className='ClaroDPBX'>
@@ -799,7 +1378,14 @@ export default class SBC extends React.Component {
                     </div>
                   </div>
                 </TabPanel>
-                <TabPanel>
+                <TabPanel
+                  style={{
+                    height: '100vh',
+                    overflowY: 'scroll',
+                    overflowX: 'hidden',
+                    paddingBottom: '10%'
+                  }}
+                >
                   <div className='ClaroDPBX'>
                     <div className='d-flex align-content-start flex-wrap justify-content-between'>
                       {gaugesMediaED}
@@ -807,7 +1393,14 @@ export default class SBC extends React.Component {
                   </div>
                 </TabPanel>
 
-                <TabPanel>
+                <TabPanel
+                  style={{
+                    height: '100vh',
+                    overflowY: 'scroll',
+                    overflowX: 'hidden',
+                    paddingBottom: '10%'
+                  }}
+                >
                   <div className='ClaroDPBX'>
                     <div className='d-flex align-content-start flex-wrap justify-content-between'>
                       {gaugesSystemED}
@@ -815,7 +1408,14 @@ export default class SBC extends React.Component {
                   </div>
                 </TabPanel>
 
-                <TabPanel>
+                <TabPanel
+                  style={{
+                    height: '100vh',
+                    overflowY: 'scroll',
+                    overflowX: 'hidden',
+                    paddingBottom: '10%'
+                  }}
+                >
                   <div className='ClaroDPBX'>
                     <div className='d-flex align-content-start flex-wrap justify-content-between'>
                       {gaugesNetworkED}
